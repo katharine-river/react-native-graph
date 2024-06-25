@@ -11,6 +11,7 @@ import Reanimated, {
   withTiming,
   withDelay,
   withSpring,
+  useAnimatedStyle,
 } from 'react-native-reanimated'
 import { GestureDetector } from 'react-native-gesture-handler'
 
@@ -64,8 +65,10 @@ export function AnimatedLineGraph({
   onPointSelected,
   onGestureStart,
   onGestureEnd,
+  showDashedLine = false,
   panGestureDelay = 300,
   SelectionDot = DefaultSelectionDot,
+  showSelectionDotShadow = true,
   enableIndicator = false,
   indicatorPulsating = false,
   horizontalPadding = enableIndicator
@@ -126,6 +129,19 @@ export function AnimatedLineGraph({
     },
     []
   )
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: withTiming(isActive.value ? 1 : 0, {
+      duration: 300,
+    }),
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    top: -2,
+    overflow: 'hidden',
+    height: isActive.value ? '100%' : '0%',
+    left: circleX.value - 1,
+  }))
 
   const straightLine = useMemo(() => {
     const path = Skia.Path.Make()
@@ -473,6 +489,15 @@ export function AnimatedLineGraph({
           {/* Actual Skia Graph */}
           <View style={styles.container} onLayout={onLayout}>
             {/* Fix for react-native-skia's incorrect type declarations */}
+            {showDashedLine && (
+              <Reanimated.View style={animatedStyle}>
+                {Array(100)
+                  .fill(0)
+                  .map((_, i) => (
+                    <View key={i} style={getDashLineStyles(color).dashedLine} />
+                  ))}
+              </Reanimated.View>
+            )}
             <Canvas style={styles.svg}>
               <Group>
                 <Path
@@ -504,7 +529,6 @@ export function AnimatedLineGraph({
                   </Path>
                 )}
               </Group>
-
               {SelectionDot != null && (
                 <SelectionDot
                   isActive={isActive}
@@ -512,6 +536,7 @@ export function AnimatedLineGraph({
                   lineThickness={lineThickness}
                   circleX={circleX}
                   circleY={circleY}
+                  showShadow={showSelectionDotShadow}
                 />
               )}
 
@@ -570,3 +595,17 @@ const styles = StyleSheet.create({
     height: 17,
   },
 })
+
+const getDashLineStyles = (color: string) => {
+  return StyleSheet.create({
+    dashedLine: {
+      width: 2,
+      height: 8,
+      marginVertical: 2,
+      overflow: 'hidden',
+      borderRadius: 1,
+      opacity: 0.4,
+      backgroundColor: color,
+    },
+  })
+}
