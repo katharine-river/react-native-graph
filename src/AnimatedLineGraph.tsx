@@ -604,6 +604,7 @@ const getDashLineStyles = (color: string) => {
       marginVertical: 2,
       overflow: 'hidden',
       borderRadius: 1,
+      opacity: 0.5,
       backgroundColor: color,
     },
   })
