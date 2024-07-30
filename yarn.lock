@@ -1988,13 +1988,13 @@
     conventional-recommended-bump "^6.1.0"
     prepend-file "^2.0.0"
 
-"@shopify/react-native-skia@^0.1.233":
-  version "0.1.233"
-  resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-0.1.233.tgz#2312cf037bb505d3963f64825ab334c085c0a9ee"
-  integrity sha512-UKWg9+ygXg77FCM9nC9Amxum8+xlXHMd3ihkm115s5hUHFepeNd1N9ynJBnO/ErgSDccavvpZaqOsQOkKiqJsg==
+"@shopify/react-native-skia@1.3.8":
+  version "1.3.8"
+  resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-1.3.8.tgz#603f7e854eeb7570e69158ac63ca9ab85528c54c"
+  integrity sha512-6B0TaQiTQHpG44eTybh+ZZ1dxe02ubPmAKiNJOhxnFCSd9ermHwE+TlJ4s45MO5zK0EdFb2YcLd1dY+/f184Ig==
   dependencies:
     canvaskit-wasm "0.39.1"
-    react-reconciler "^0.27.0"
+    react-reconciler "0.27.0"
 
 "@sideway/address@^4.1.3":
   version "4.1.4"
@@ -6859,7 +6859,7 @@ react-native@^0.71.7:
     whatwg-fetch "^3.0.0"
     ws "^6.2.2"
 
-react-reconciler@^0.27.0:
+react-reconciler@0.27.0:
   version "0.27.0"
   resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.27.0.tgz#360124fdf2d76447c7491ee5f0e04503ed9acf5b"
   integrity sha512-HmMDKciQjYmBRGuuhIaKA1ba/7a+UsM5FzOZsMO2JYHt9Jh8reCb7j1eDC95NOyUlKM9KRyvdx0flBuDvYSBoA==
