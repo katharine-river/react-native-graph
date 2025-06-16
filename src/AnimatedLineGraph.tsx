@@ -127,18 +127,21 @@ export function AnimatedLineGraph({
     []
   )
 
-  const animatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(isActive.value ? 1 : 0, {
-      duration: 300,
+  const animatedStyle = useAnimatedStyle(
+    () => ({
+      opacity: withTiming(isActive.value ? 1 : 0, {
+        duration: 300,
+      }),
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      top: -2,
+      overflow: 'hidden',
+      height: isActive.value ? '100%' : '0%',
+      left: circleX.value - 1,
     }),
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-    top: -2,
-    overflow: 'hidden',
-    height: isActive.value ? '100%' : '0%',
-    left: circleX.value - 1,
-  }))
+    [isActive, circleX]
+  )
 
   const straightLine = useMemo(() => {
     const path = Skia.Path.Make()
