@@ -187,11 +187,9 @@ See this [example `<SelectionDot />` component](./example/src/components/CustomS
 
 ---
 
-### `fadeInGradientStops`
+### `gradientLineColors`
 
-Used to create custom fade-in gradients with multiple colors at different positions.
-
->  Requires `enableFadeInMask` to be `true`.
+Used to create custom line gradients with multiple colors at different positions.
 
 This feature allows you to create complex gradient effects by specifying multiple colors with their positions (0.0 to 1.0 representing 0% to 100%).
 
@@ -209,31 +207,8 @@ const customGradientStops = [
   points={priceHistory}
   animated={true}
   color="#4484B2"
-  enableFadeInMask={true}
-  fadeInGradientStops={customGradientStops}
+  gradientLineColors={customGradientStops}
 />
-```
-
-**Rainbow gradient example:**
-```jsx
-const rainbowGradient = [
-  { color: '#ff0000', position: 0.0 },    // Red
-  { color: '#ff8000', position: 0.17 },   // Orange
-  { color: '#ffff00', position: 0.33 },   // Yellow
-  { color: '#00ff00', position: 0.5 },    // Green
-  { color: '#0080ff', position: 0.67 },   // Blue
-  { color: '#8000ff', position: 0.83 },   // Purple
-  { color: '#ff0080', position: 1.0 },    // Pink
-]
-```
-
-**Fade from transparent to solid:**
-```jsx
-const fadeGradient = [
-  { color: '#4484B200', position: 0.0 },  // Transparent
-  { color: '#4484B280', position: 0.5 },  // Semi-transparent
-  { color: '#4484B2ff', position: 1.0 },  // Solid
-]
 ```
 
 ## Sponsor
