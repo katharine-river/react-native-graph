@@ -84,7 +84,7 @@ export function StaticLineGraph({
           strokeJoin="round"
           strokeCap="round"
         >
-          {enableFadeInMask && (
+          {enableFadeInMask || gradientLineColors && (
             <LinearGradient
               start={gradientFrom}
               end={gradientTo}
