@@ -58,6 +58,7 @@ export function AnimatedLineGraph({
   lineThickness = 3,
   range,
   enableFadeInMask,
+  gradientLineColors,
   enablePanGesture = false,
   onPointSelected,
   onGestureStart,
@@ -111,13 +112,20 @@ export function AnimatedLineGraph({
     return 0
   })
 
-  const positions = useDerivedValue(() => [
-    0,
-    Math.min(0.15, pathEnd.value),
-    pathEnd.value,
-    pathEnd.value,
-    1,
-  ])
+  const positions = useDerivedValue(() => {
+    if (gradientLineColors && gradientLineColors.length > 0) {
+      // Use custom gradient positions
+      return gradientLineColors.map(stop => stop.position)
+    }
+    // Use default positions
+    return [
+      0,
+      Math.min(0.15, pathEnd.value),
+      pathEnd.value,
+      pathEnd.value,
+      1,
+    ]
+  })
 
   const onLayout = useCallback(
     ({ nativeEvent: { layout } }: LayoutChangeEvent) => {
@@ -289,7 +297,10 @@ export function AnimatedLineGraph({
   ])
 
   const gradientColors = useMemo(() => {
-    if (enableFadeInMask) {
+    if (gradientLineColors && gradientLineColors.length > 0) {
+      // Use custom gradient stops
+      return gradientLineColors.map(stop => getSixDigitHex(stop.color))
+    } else if (enableFadeInMask) {
       return [
         `${getSixDigitHex(color)}00`,
         `${getSixDigitHex(color)}ff`,
@@ -305,7 +316,7 @@ export function AnimatedLineGraph({
       `${getSixDigitHex(color)}33`,
       `${getSixDigitHex(color)}33`,
     ]
-  }, [color, enableFadeInMask])
+  }, [color, enableFadeInMask, gradientLineColors])
 
   const path = useDerivedValue(
     () => {
@@ -432,7 +443,7 @@ export function AnimatedLineGraph({
 
   useAnimatedReaction(
     () => x.value,
-    (fingerX) => {
+    (fingerX: number) => {
       if (isActive.value || fingerX) {
         setFingerX(fingerX)
         runOnJS(setFingerPoint)(fingerX)
@@ -443,7 +454,7 @@ export function AnimatedLineGraph({
 
   useAnimatedReaction(
     () => isActive.value,
-    (active) => {
+    (active: boolean) => {
       runOnJS(setIsActive)(active)
     },
     [isActive, setIsActive]
@@ -494,7 +505,6 @@ export function AnimatedLineGraph({
             <Canvas style={styles.svg}>
               <Group>
                 <Path
-                  // @ts-expect-error
                   path={path}
                   strokeWidth={lineThickness}
                   style="stroke"
@@ -511,7 +521,6 @@ export function AnimatedLineGraph({
 
                 {shouldFillGradient && (
                   <Path
-                    // @ts-expect-error
                     path={gradientPath}
                   >
                     <LinearGradient

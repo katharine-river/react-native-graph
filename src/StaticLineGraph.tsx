@@ -16,6 +16,7 @@ export function StaticLineGraph({
   color,
   lineThickness = 3,
   enableFadeInMask,
+  gradientLineColors,
   style,
   ...props
 }: StaticLineGraphProps): React.ReactElement {
@@ -53,10 +54,21 @@ export function StaticLineGraph({
     [height, lineThickness, pathRange, pointsInRange, width]
   )
 
-  const gradientColors = useMemo(
-    () => [`${getSixDigitHex(color)}00`, `${getSixDigitHex(color)}ff`],
-    [color]
-  )
+  // Create gradient colors and positions based on fadeInGradientStops or default
+  const { gradientColors, gradientPositions } = useMemo(() => {
+    if (gradientLineColors && gradientLineColors.length > 0) {
+      // Use custom gradient stops
+      const colors = gradientLineColors.map(stop => getSixDigitHex(stop.color))
+      const positions = gradientLineColors.map(stop => stop.position)
+      return { gradientColors: colors, gradientPositions: positions }
+    } else {
+      // Use default fade-in gradient
+      const colors = [`${getSixDigitHex(color)}00`, `${getSixDigitHex(color)}ff`]
+      const positions = [0, 1]
+      return { gradientColors: colors, gradientPositions: positions }
+    }
+  }, [color, gradientLineColors])
+
   const gradientFrom = useMemo(() => vec(0, 0), [])
   const gradientTo = useMemo(() => vec(width * 0.15, 0), [width])
 
@@ -67,7 +79,7 @@ export function StaticLineGraph({
         <Path
           path={path}
           strokeWidth={lineThickness}
-          color={enableFadeInMask ? undefined : color}
+          color={enableFadeInMask || gradientLineColors ? undefined : color}
           style="stroke"
           strokeJoin="round"
           strokeCap="round"
@@ -77,6 +89,7 @@ export function StaticLineGraph({
               start={gradientFrom}
               end={gradientTo}
               colors={gradientColors}
+              positions={gradientPositions}
             />
           )}
         </Path>

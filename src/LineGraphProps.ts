@@ -11,6 +11,11 @@ export interface GraphPoint {
 
 export type GraphRange = Partial<GraphPathRange>
 
+export interface GradientStop {
+  color: string
+  position: number // 0.0 to 1.0 representing percentage
+}
+
 export interface SelectionDotProps {
   isActive: SharedValue<boolean>
   color: BaseLineGraphProps['color']
@@ -38,6 +43,12 @@ interface BaseLineGraphProps extends ViewProps {
    * (Optional) Colors for the fill gradient below the graph line
    */
   gradientFillColors?: Color[]
+  /**
+   * (Optional) Gradient stops for the fade-in mask with custom positions
+   * Each stop should have a color and position (0.0 to 1.0)
+   * If provided, this overrides the default fade-in gradient
+   */
+  gradientLineColors?: GradientStop[]
   /**
    * The width of the graph line (path)
    *
