@@ -1,4 +1,4 @@
-import { Canvas, LinearGradient, Path, vec } from '@shopify/react-native-skia'
+import { Canvas, LinearGradient, Path, vec, Group } from '@shopify/react-native-skia'
 import { getSixDigitHex } from './utils/getSixDigitHex'
 import React, { useCallback, useMemo, useState } from 'react'
 import { View, StyleSheet, LayoutChangeEvent } from 'react-native'
@@ -16,6 +16,7 @@ export function StaticLineGraph({
   color,
   lineThickness = 3,
   enableFadeInMask,
+  FillBackground,
   style,
   ...props
 }: StaticLineGraphProps): React.ReactElement {
@@ -62,8 +63,12 @@ export function StaticLineGraph({
 
   return (
     <View {...props} style={style} onLayout={onLayout}>
-      {/* Fix for react-native-skia's incorrect type declarations */}
       <Canvas style={styles.svg}>
+        {!!FillBackground && width > 0 && height > 0 && path && (
+          <Group clip={path}>
+            {FillBackground}
+          </Group>
+        )}
         <Path
           path={path}
           strokeWidth={lineThickness}
