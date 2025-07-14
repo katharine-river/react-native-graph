@@ -74,6 +74,7 @@ export function AnimatedLineGraph({
   verticalPadding = lineThickness,
   TopAxisLabel,
   BottomAxisLabel,
+  FillBackground,
   ...props
 }: AnimatedLineGraphProps): React.ReactElement {
   const [width, setWidth] = useState(0)
@@ -318,16 +319,14 @@ export function AnimatedLineGraph({
     [interpolateProgress]
   )
 
-  const gradientPath = useDerivedValue(
-    () => {
-      const from = gradientPaths.value.from ?? straightLine
-      const to = gradientPaths.value.to ?? straightLine
+  const gradientPath = useSharedValue<Path>(straightLine);
 
-      return to.interpolate(from, interpolateProgress.value)
-    },
-    // RN Skia deals with deps differently. They are actually the required SkiaValues that the derived value listens to, not react values.
-    [interpolateProgress]
-  )
+  useDerivedValue(() => {
+    const from = gradientPaths.value.from ?? straightLine;
+    const to = gradientPaths.value.to ?? straightLine;
+  
+    gradientPath.value = to.interpolate(from, interpolateProgress.value);
+  }, [interpolateProgress]);
 
   const stopPulsating = useCallback(() => {
     cancelAnimation(indicatorPulseAnimation)
@@ -432,7 +431,7 @@ export function AnimatedLineGraph({
 
   useAnimatedReaction(
     () => x.value,
-    (fingerX) => {
+    (fingerX: number) => {
       if (isActive.value || fingerX) {
         setFingerX(fingerX)
         runOnJS(setFingerPoint)(fingerX)
@@ -443,7 +442,7 @@ export function AnimatedLineGraph({
 
   useAnimatedReaction(
     () => isActive.value,
-    (active) => {
+    (active: boolean) => {
       runOnJS(setIsActive)(active)
     },
     [isActive, setIsActive]
@@ -466,7 +465,7 @@ export function AnimatedLineGraph({
     paddingBottom: BottomAxisLabel != null ? 20 : 0,
   }
 
-  const indicatorVisible = enableIndicator && commandsChanged > 0
+  const indicatorVisible = enableIndicator && commandsChanged > 0;
 
   return (
     <View {...props}>
@@ -492,6 +491,12 @@ export function AnimatedLineGraph({
               </Reanimated.View>
             )}
             <Canvas style={styles.svg}>
+              {/* Custom chart fill background (e.g., grid lines) injected via prop */}
+              {!!FillBackground && width > 0 && height > 0 &&gradientPath?.value && gradientPath.value.toCmds().length > 0 && (
+                  <Group clip={gradientPath}>
+                    {FillBackground}
+                  </Group>
+                )}
               <Group>
                 <Path
                   // @ts-expect-error

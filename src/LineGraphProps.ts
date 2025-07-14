@@ -48,6 +48,10 @@ interface BaseLineGraphProps extends ViewProps {
    * Enable the Fade-In Gradient Effect at the beginning of the Graph
    */
   enableFadeInMask?: boolean
+  /**
+   * The element that gets rendered as the fill background of the Graph
+   */
+  FillBackground?: React.ReactElement
 }
 
 export type StaticLineGraphProps = BaseLineGraphProps & {
