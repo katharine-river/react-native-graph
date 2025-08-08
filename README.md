@@ -185,6 +185,32 @@ Example:
 
 See this [example `<SelectionDot />` component](./example/src/components/CustomSelectionDot.tsx).
 
+---
+
+### `gradientLineColors`
+
+Used to create custom line gradients with multiple colors at different positions.
+
+This feature allows you to create complex gradient effects by specifying multiple colors with their positions (0.0 to 1.0 representing 0% to 100%).
+
+Example:
+
+```jsx
+const customGradientStops = [
+  { color: '#ff0000', position: 0.0 },    // Red at 0%
+  { color: '#00ff00', position: 0.3 },    // Green at 30%
+  { color: '#0000ff', position: 0.7 },    // Blue at 70%
+  { color: '#ffff00', position: 1.0 },    // Yellow at 100%
+]
+
+<LineGraph
+  points={priceHistory}
+  animated={true}
+  color="#4484B2"
+  gradientLineColors={customGradientStops}
+/>
+```
+
 ## Sponsor
 
 <img src="./img/pinkpanda.png" align="right" height="50">

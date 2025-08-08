@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { View, StyleSheet, Text, Button, ScrollView } from 'react-native'
 import { LineGraph } from 'react-native-graph'
 import StaticSafeAreaInsets from 'react-native-static-safe-area-insets'
-import type { GraphRange } from '../../../src/LineGraphProps'
+import type { GraphRange, GradientStop } from '../../../src/LineGraphProps'
 import { SelectionDot } from '../components/CustomSelectionDot'
 import { Toggle } from '../components/Toggle'
 import {
@@ -18,6 +18,31 @@ const COLOR = '#6a7ee7'
 const GRADIENT_FILL_COLORS = ['#7476df5D', '#7476df4D', '#7476df00']
 const SMALL_POINTS = generateSinusGraphData(9)
 
+// Example custom gradient stops with multiple colors at different positions
+const CUSTOM_GRADIENT_STOPS: GradientStop[] = [
+  { color: '#ff0000', position: 0.0 },    // Red at 0%
+  { color: '#00ff00', position: 0.3 },    // Green at 30%
+  { color: '#0000ff', position: 0.7 },    // Blue at 70%
+  { color: '#ffff00', position: 1.0 },    // Yellow at 100%
+]
+
+// Additional gradient examples for demonstration
+const RAINBOW_GRADIENT: GradientStop[] = [
+  { color: '#ff0000', position: 0.0 },    // Red
+  { color: '#ff8000', position: 0.17 },   // Orange
+  { color: '#ffff00', position: 0.33 },   // Yellow
+  { color: '#00ff00', position: 0.5 },    // Green
+  { color: '#0080ff', position: 0.67 },   // Blue
+  { color: '#8000ff', position: 0.83 },   // Purple
+  { color: '#ff0080', position: 1.0 },    // Pink
+]
+
+const FADE_GRADIENT: GradientStop[] = [
+  { color: '#6a7ee700', position: 0.0 },  // Transparent
+  { color: '#6a7ee780', position: 0.5 },  // Semi-transparent
+  { color: '#6a7ee7ff', position: 1.0 },  // Solid
+]
+
 export function GraphPage() {
   const colors = useColors()
 
@@ -30,8 +55,23 @@ export function GraphPage() {
   const [enableRange, setEnableRange] = useState(false)
   const [enableIndicator, setEnableIndicator] = useState(false)
   const [indicatorPulsating, setIndicatorPulsating] = useState(false)
+  const [enableCustomGradientStops, setEnableCustomGradientStops] = useState(false)
+  const [selectedGradient, setSelectedGradient] = useState<'custom' | 'rainbow' | 'fade'>('custom')
 
   const [points, setPoints] = useState(POINTS)
+
+  const getSelectedGradientStops = useCallback(() => {
+    if (!enableCustomGradientStops) return undefined
+    
+    switch (selectedGradient) {
+      case 'rainbow':
+        return RAINBOW_GRADIENT
+      case 'fade':
+        return FADE_GRADIENT
+      default:
+        return CUSTOM_GRADIENT_STOPS
+    }
+  }, [enableCustomGradientStops, selectedGradient])
 
   const refreshData = useCallback(() => {
     setPoints(generateRandomGraphData(POINT_COUNT))
@@ -94,6 +134,7 @@ export function GraphPage() {
         gradientFillColors={enableGradient ? GRADIENT_FILL_COLORS : undefined}
         enablePanGesture={enablePanGesture}
         enableFadeInMask={enableFadeInEffect}
+        fadeInGradientStops={getSelectedGradientStops()}
         onGestureStart={() => hapticFeedback('impactLight')}
         SelectionDot={enableCustomSelectionDot ? SelectionDot : undefined}
         range={range}
@@ -123,6 +164,35 @@ export function GraphPage() {
           isEnabled={enableFadeInEffect}
           setIsEnabled={setEnableFadeInEffect}
         />
+        <Toggle
+          title="Custom Gradient Stops:"
+          isEnabled={enableCustomGradientStops}
+          setIsEnabled={setEnableCustomGradientStops}
+        />
+        {enableCustomGradientStops && (
+          <View style={styles.gradientSelector}>
+            <Text style={[styles.gradientLabel, { color: colors.foreground }]}>
+              Gradient Type:
+            </Text>
+            <View style={styles.gradientButtons}>
+              <Button
+                title="Custom"
+                onPress={() => setSelectedGradient('custom')}
+                color={selectedGradient === 'custom' ? COLOR : '#666'}
+              />
+              <Button
+                title="Rainbow"
+                onPress={() => setSelectedGradient('rainbow')}
+                color={selectedGradient === 'rainbow' ? COLOR : '#666'}
+              />
+              <Button
+                title="Fade"
+                onPress={() => setSelectedGradient('fade')}
+                color={selectedGradient === 'fade' ? COLOR : '#666'}
+              />
+            </View>
+          </View>
+        )}
         <Toggle
           title="Custom Selection Dot:"
           isEnabled={enableCustomSelectionDot}
@@ -190,5 +260,17 @@ const styles = StyleSheet.create({
   },
   controlsScrollViewContent: {
     justifyContent: 'center',
+  },
+  gradientSelector: {
+    marginVertical: 10,
+  },
+  gradientLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  gradientButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
 })
